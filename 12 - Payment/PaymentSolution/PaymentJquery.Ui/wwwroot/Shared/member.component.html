@@ -1,0 +1,54 @@
+﻿<fieldset class="fieldset2">
+   <legend><span style=""font-weight: bold"> Customer Info: </span></legend>
+   <div ng-style="isMemberSuccess">
+      <div>
+         <label class="memberTH">Member ID:</label>
+         <span id="uiMemberId"></span>
+      </div>
+      <div>
+         <label class="memberTH">Name:   </label>
+         <span id="uiFullName"></span>
+      </div>
+      <div>
+         <label class="memberTH">Zip Code:  </label>
+         <span id="uiZipCode"></span>
+      </div>
+   </div>
+</fieldset>
+
+<script type="text/javascript">
+   $(document).ready(function () {
+      GetMemberInfo("");
+   });
+
+
+   function GetMemberInfo(item) {
+     var options = {};
+     var id = "1";
+      options.url = "/api/GetMemberInfo/" +id;
+      options.type = "GET";
+      console.log('in GetMemberInfo');
+      options.contentType = "application/json";
+      options.dataType = "json";
+
+      options.success = function (msg) {
+         displayMemberInfo(msg);
+         $("#msg").html(msg);
+         $("#title").val("");
+      },
+         options.error = function () {
+            $("#msg").html("Error while calling the Web API!");
+         };
+      $.ajax(options);
+   }
+
+   function displayMemberInfo(member) {
+      console.log("in displayMemberInfo Member= ");
+      console.dir(member);
+      console.log("msg.memberId= " + member.memberId);
+      $("#uiMemberId").html(member.memberId);
+      $("#uiFullName").html(member.fullName);
+      $("#uiZipCode").html(member.zipCode);
+
+   }
+</script>

@@ -1,0 +1,62 @@
+﻿<fieldset>
+   <legend><span style="font-weight: bold">Products:</span> </legend>
+   <div style="display: table;">
+      <div style="display: table-row">
+         <div style="display: table-cell; width: 110px; margin-left: 10px;" class="paymentTHBold">&nbsp;&nbsp;&nbsp;Product</div>
+         <div style="display: table-cell; width: 110px; margin-left: 10px;" class="paymentTHBold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total Price</div>
+         <div style="display: table-cell; width: 130px; margin-left: 10px;" class="paymentTHBold">&nbsp;&nbsp;Monthly Payment</div>
+      </div>
+      <div style="display: table-row">
+         <div style="display: table-cell; width:110px">
+            <select id="uiProductList" style="display: table-cell; min-width: 100px; " class="paymentTHBold" onchange='onProductListChange(this)'>Products</select>
+         </div>
+         <div style="display: table-cell; margin-right: 10px;">&nbsp;&nbsp;&nbsp;$<input data- type="text" class="paymentTHBold" disabled="disabled" style="margin-left: 1px;width: 60px;" id="uiSelectedProductPrice" /></div>
+         <div style="display: table-cell;">$<input type="text" class="paymentTHBold" disabled="disabled" style="margin-left: 1px;width: 60px;" id="uiMmontlyPayment" /></div>
+      </div>
+   </div>
+</fieldset>
+<script type="text/javascript">
+
+   $(document).ready(function () {
+      getProductList();
+   });
+
+   // Get all blogs to display
+   function getProductList() {
+      // Call Web API to get a list of products
+      $.ajax({
+         url: '/api/GetProductList/',
+         type: 'GET',
+         dataType: 'json',
+         success: function (products) {
+            displayProductInfo(products);
+         },
+         error: function (request, message, error) {
+            handleException(request, message, error);
+         }
+      });
+   }
+
+   function displayProductInfo(items) {
+      console.log("in displayProductInfo products= ");
+      console.dir(items);
+      $("#uiProductList option").remove(); // Remove all <option> child tags.
+      // add empty row
+      $("#uiProductList").append('<option value=' + 0 + "  data-price=" + 0 + ' >' + ' ' + '</option>');
+      $.each(items, function (index, item) { // Iterates through a collection
+         $("#uiProductList").append('<option value=' + item.productId + "  data-price=" + item.price + ' >' + item.name + '</option>');
+      });
+   }
+
+   //
+   function onProductListChange(item) {
+      var price = $('#uiProductList option:selected').attr('data-price');
+      console.log("Selected product data-price= " + price);
+
+      // set seelcted product price and montly paymet
+      $('#uiSelectedProductPrice').val(price);
+      $('#uiPaymentAmount').val(price);
+      $('#uiMmontlyPayment').val((price / 12).toFixed(2));
+   }
+
+</script>

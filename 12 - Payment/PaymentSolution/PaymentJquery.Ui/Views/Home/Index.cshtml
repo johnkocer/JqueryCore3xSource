@@ -1,0 +1,54 @@
+﻿@{
+  ViewData["Title"] = "SmartIT- Payment Progressing";
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<H3>jQuery Payment Processing ASP.NET MVC Core Using WEB API </H3>
+<div id="uiMemberComponent"></div>
+<div id="uiProductComponent"></div>
+<div id="uiPaymentComponent"></div>
+
+<div id="msg"></div>
+<script type="text/javascript">
+
+  $(document).ready(function () {
+   // load components
+    $('#uiMemberComponent').load('@Url.Content("~/shared/member.component.html")');
+    $('#uiProductComponent').load('@Url.Content("~/shared/product.component.html")');
+    $('#uiPaymentComponent').load('@Url.Content("~/shared/payment.component.html")');
+
+  });
+
+  //shared javascripts put here
+  var Member = {
+    memberId: 0,
+    fullName: "",
+    zipCode: "",
+    isSuccess: "",
+    errorMessage: ""
+  }
+
+  var Payment = {
+    memberId: "sample string 1",
+    paymentAmount: 2.0,
+    paymentDate: "2017-01-21T13:27:07.556148-07:00",
+    nameOnCard: "sample string 4",
+    creditCardNumber: "4441111111111111",
+    cvv: "sample string 6",
+    paymentSource: "sample string 7",
+    expirationDate: "sample string 8",
+    isSuccess: true,
+    errorMessage: "sample string 10",
+    paymentMessage: "paymentMessage",
+    paymentConfirmationId: "sample string 11",
+    member: {
+      memberId: "sample string 1",
+      fullName: "sample string 2",
+      zipCode: "sample string 3",
+      isSuccess: true,
+      errorMessage: "sample string 5"
+    }
+  };
+
+</script>
+

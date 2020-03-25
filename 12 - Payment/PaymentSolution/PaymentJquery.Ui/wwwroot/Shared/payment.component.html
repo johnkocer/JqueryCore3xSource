@@ -1,0 +1,134 @@
+﻿<div>
+   <fieldset>
+      <legend><span style="font-weight: bold">Payment Info:  </span></legend>
+      <div>
+         <div>
+            <div>
+               <label class="paymentTH">Payment Type:</label>
+               <select id="uiPaymentTypes" style="display: table-cell; min-width: 100px; " class="paymentTHBold" onchange='onProductListChange(this)'>ProductsH</select>
+            </div>
+            <div>
+               <label class="paymentTH">Credit Card Number</label><br />
+               <input type="text" id="uiCreditCardNumber" placeholder1="Enter Credit Card Number" numbers-only required class="number-input" size="16" maxsize="16" value="4111111111111111">
+            </div>
+            <div style="float: left; width: 80px;">
+               <label class="paymentTH">Expiry Date</label><br />
+               <input type="text" id="uiExpiryDate" numbers-only required class="number-input" size="10" maxsize="10" value="01/12/2020">
+            </div>
+            <div style="float: left; margin-left: 10px; width: 100px;">
+               <label class="paymentTH">Security code</label><br />
+               <input type="text" id="uiCvv" numbers-only required class="number-input" size="4" maxsize="4" value="911">
+            </div>
+         </div>
+         <br /><br />
+         <div>
+            <br />
+            <label class="paymentTH">Payment Amount:</label>
+            <br />
+            $<input type="text" id="uiPaymentAmount" name="paymentAmount" size="5" [(ngModel)]="uiProduct.price" readonly="readonly" value="100">
+            <br /><button class="btn btn-primary" onclick='return onMakePaymentClick(this);' type="submit">
+               Process Payment
+            </button>
+         </div>
+         <br />
+         <label id="uiPaymentMessage"> </label>
+      </div>
+   </fieldset>
+</div>
+<script type="text/javascript">
+   $(document).ready(function () {
+      displayPaymentTypesH();
+   });
+
+   // payment type
+   function getPaymentType() {
+      var paymentType = [
+         { text: "Visa", value: "Visa" }, { text: "Mastercard", value: "Mastercard" },
+         { text: "Discover", value: "Discover" },
+         { text: "AmericanExpress", value: "AmericanExpress" },
+         { text: "SearsCard", value: "SearsCard" }, { text: "SearsGiftCard", value: "SearsGiftCard" }
+      ];
+
+      return paymentType;
+   }
+
+
+   function displayPaymentTypesH() {
+      console.log("in displayPaymentType ");
+      var paymentTypeList = getPaymentType();
+      console.dir(paymentTypeList);
+
+      $("#uiPaymentTypes option").remove(); // Remove all <option> child tags.
+      // add empty row
+      $.each(paymentTypeList, function (index, item) { // Iterates through a collection
+         $("#uiPaymentTypes").append('<option value=' + item.value + '>' + item.text + '</option>');
+         console.log("item value " + item.text);
+      });
+   }
+
+   function onMakePaymentClick(item) {
+      clearMessage();
+      if (!validateSubmit())
+         return false;
+
+      var options = {};
+      options.url = "/api/MakePayment";
+      options.type = "POST";
+
+      var obj = Payment;
+      obj.memberId = $("#uiMemberId").html();
+      obj.paymentAmount = parseFloat($("#uiPaymentAmount").val());
+      obj.paymentDate = new Date();
+      obj.nameOnCard = $("#uiFullName").html();
+      obj.creditCardNumber = $("#uiCreditCardNumber").val();
+      obj.cvv = $("#uiCvv").val();
+      obj.expirationDate = $("#uiExpiryDate").val();
+      obj.paymentMessage = "";
+      obj.member.memberId = $("#uiMemberId").html();
+      obj.member.fullName = $("#uiFullName").html();
+      obj.member.zipCode = $("#uiZipCode").html();
+
+      console.log('in MakePayment');
+      console.dir(obj);
+      options.data = JSON.stringify(obj);
+      options.contentType = "application/json";
+      options.dataType = "json";
+
+      options.success = function (msg) {
+         displayMessage(msg.paymentMessage, false);
+         console.log("msg= ");
+         console.dir(msg);
+      },
+         options.error = function () {
+            $("#uiPaymentMessage").html("Error while calling the Web API!");
+         };
+      $.ajax(options);
+
+   }
+
+   function validateSubmit() {
+
+      // validate product
+      var selectedproduct = $('#uiProductList option:selected').val();
+      if (selectedproduct == 0) {
+
+         displayMessage("Please select a product!", true);
+         return false;
+      }
+      console.log("uiProductList selectedValue= " + selectedproduct);
+      return true;
+   }
+
+   function clearMessage() {
+      $("#uiPaymentMessage").html("");
+   }
+   function displayMessage(message, isError) {
+      $("#uiPaymentMessage").html(message);
+      if (isError) {
+         $("#uiPaymentMessage").css("color", 'red');
+      }
+      else {
+         $("#uiPaymentMessage").css("color", 'darkGreen');
+      }
+   }
+</script>
